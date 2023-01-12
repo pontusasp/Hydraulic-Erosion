@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 
 public class TerrainGenerator : MonoBehaviour {
@@ -121,6 +122,27 @@ public class TerrainGenerator : MonoBehaviour {
         Vector3[] verts = new Vector3[mapSize * mapSize];
         int[] triangles = new int[(mapSize - 1) * (mapSize - 1) * 6];
         int t = 0;
+
+        Debug.Log("Creating output texture...");
+
+        // Create a new Texture2D with the same size as the terrain data
+        Texture2D heightmap = new Texture2D(mapSize, mapSize);
+
+        // Set the pixel colors of the image based on the height values
+        for (int y = 0; y < mapSize; y++) {
+            for (int x = 0; x < mapSize; x++) {
+                float height = map[x + y * mapSize];
+                Color color = new Color(height, height, height);
+                heightmap.SetPixel(x, y, color);
+            }
+        }
+
+        // Apply the changes to the texture
+        heightmap.Apply();
+
+        // Save the image data to a PNG file
+        byte[] bytes = heightmap.EncodeToPNG();
+        File.WriteAllBytes("Assets/output-heightmap.png", bytes);
 
         for (int i = 0; i < mapSize * mapSize; i++) {
             int x = i % mapSize;

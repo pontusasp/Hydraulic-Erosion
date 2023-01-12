@@ -17,7 +17,8 @@ public class HeightMapGenerator : MonoBehaviour {
         if (useComputeShader) {
             return GenerateHeightMapGPU (mapSize);
         }
-        return LoadHeightMap("Assets/heightmap240x240.png", mapSize);
+        //return LoadHeightMap("Assets/heightmap240x240.png", 240-6);
+        return LoadHeightMap("Assets/norwaySquare.png", 2578);
         return GenerateHeightMapCPU (mapSize);
     }
 

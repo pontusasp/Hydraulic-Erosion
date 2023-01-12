@@ -10,7 +10,10 @@ public class MeshEditor : Editor {
         DrawDefaultInspector ();
 
         if (GUILayout.Button ("Generate Mesh")) {
+            Debug.Log("Generating Mesh");
+            Debug.Log("Generating heightmap...");
             terrainGenerator.GenerateHeightMap ();
+            Debug.Log("Constructing mesh...");
             terrainGenerator.ContructMesh();
         }
 
@@ -20,18 +23,22 @@ public class MeshEditor : Editor {
         }
 
         if (GUILayout.Button ("Erode (" + numIterationsString + " iterations)")) {
+            Debug.Log("Eroding");
             var sw = new System.Diagnostics.Stopwatch ();
 
+            Debug.Log("Generating heightmap...");
             sw.Start();
             terrainGenerator.GenerateHeightMap();
             int heightMapTimer = (int)sw.ElapsedMilliseconds;
             sw.Reset();
 
+            Debug.Log("Eroding heightmap...");
             sw.Start();
             terrainGenerator.Erode ();
             int erosionTimer = (int)sw.ElapsedMilliseconds;
             sw.Reset();
 
+            Debug.Log("Constructing mesh...");
             sw.Start();
             terrainGenerator.ContructMesh();
             int meshTimer = (int)sw.ElapsedMilliseconds;

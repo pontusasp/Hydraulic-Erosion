@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.IO;
+using UnityEngine;
 
 public class Erosion : MonoBehaviour {
 
@@ -125,6 +126,29 @@ public class Erosion : MonoBehaviour {
                 water *= (1 - evaporateSpeed);
             }
         }
+
+        /*
+        Debug.Log("Creating output texture...");
+
+        // Create a new Texture2D with the same size as the terrain data
+        Texture2D heightmap = new Texture2D(mapSize, mapSize);
+
+        // Set the pixel colors of the image based on the height values
+        for (int y = 0; y < mapSize; y++) {
+            for (int x = 0; x < mapSize; x++) {
+                float height = map[x + y * mapSize];
+                Color color = new Color(height, height, height);
+                heightmap.SetPixel(x, y, color);
+            }
+        }
+
+        // Apply the changes to the texture
+        heightmap.Apply();
+
+        // Save the image data to a PNG file
+        byte[] bytes = heightmap.EncodeToPNG();
+        File.WriteAllBytes("Assets/output-heightmap.png", bytes);
+        */
     }
 
     HeightAndGradient CalculateHeightAndGradient (float[] nodes, int mapSize, float posX, float posY) {
