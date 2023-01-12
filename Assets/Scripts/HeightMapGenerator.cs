@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.IO;
+using UnityEngine;
 
 public class HeightMapGenerator : MonoBehaviour {
     public int seed;
@@ -16,6 +17,7 @@ public class HeightMapGenerator : MonoBehaviour {
         if (useComputeShader) {
             return GenerateHeightMapGPU (mapSize);
         }
+        return LoadHeightMap("Assets/heightmap240x240.png", mapSize);
         return GenerateHeightMapCPU (mapSize);
     }
 
@@ -97,6 +99,48 @@ public class HeightMapGenerator : MonoBehaviour {
             }
         }
 
+        // Normalize
+        if (maxValue != minValue) {
+            for (int i = 0; i < map.Length; i++) {
+                map[i] = (map[i] - minValue) / (maxValue - minValue);
+            }
+        }
+
+        return map;
+    }
+
+    float[] GetHeightmap(Texture2D texture) {
+        float[] heights = new float[texture.width * texture.height];
+        for (int y = 0; y < texture.height; y++) {
+            for (int x = 0; x < texture.width; x++) {
+                // get the pixel color
+                Color pixel = texture.GetPixel(x, y);
+                // Normalize the color value (from 0-255) to (0-1)
+                float height = pixel.r / 255f;
+                heights[x + y * texture.width] = height * 10;
+            }
+        }
+        return heights;
+    }
+
+
+    float[] LoadHeightMap(string filename, int mapSize) {
+        Debug.Log("Heightmap recieved request to load a texture with size " + mapSize + "x" + mapSize);
+        // Create a new Texture2D and load the PNG file into it
+        Texture2D heightmap = new Texture2D(mapSize, mapSize);
+        heightmap.LoadImage(File.ReadAllBytes(filename));
+
+        float[] map = GetHeightmap(heightmap);
+
+        float minValue = float.MaxValue;
+        float maxValue = float.MinValue;
+        for (int y = 0; y < mapSize; y++) {
+            for (int x = 0; x < mapSize; x++) {
+                minValue = Mathf.Min(map[x + y * heightmap.width], minValue);
+                maxValue = Mathf.Max(map[x + y * heightmap.width], maxValue);
+            }
+        }
+        
         // Normalize
         if (maxValue != minValue) {
             for (int i = 0; i < map.Length; i++) {
